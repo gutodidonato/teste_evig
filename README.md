@@ -15,6 +15,31 @@ Desenvolver uma aplicação backend utilizando **FastAPI** que permita a gestão
 3. **Geração Automática de Descrição de Imóveis**: Ao registrar ou atualizar um imóvel, a descrição deve ser gerada automaticamente por um LLM com base nas informações fornecidas.
 4. **Geocodificação de Endereço**: Consumir a API do Nominatim para obter as coordenadas (latitude e longitude) com base no endereço do imóvel. Se não for possível encontrar as coordenadas, armazenar zero para latitude e longitude.
 
+**Exemplo de JSON para Criação e Atualização de Usuário:**
+
+```json
+{
+  "fantasy_name": "Tech Solutions Ltda",
+  "cnpj": "12.345.678/0001-90",
+  "email": "contact@techsolutions.com",
+  "password": "securepassword123"
+}
+```
+
+**Exemplo de JSON para Criação e Atualização de Imóvel:**
+
+```json
+{
+  "property_type": "HOUSE",
+  "address_full": "0000 Avenida Brigadeiro Faria Lima, São Paulo - SP - Brasil",
+  "price": 500000.00,
+  "area": 150,
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "parking": 1
+}
+```
+
 ## Tecnologias e Requisitos Obrigatórios
 
 - **Python**
