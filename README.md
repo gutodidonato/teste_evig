@@ -55,7 +55,7 @@ Desenvolver uma aplicação backend utilizando **FastAPI** que permita a gestão
    - `Dockerfile`  
    - `requirements.txt`  
    - `env.example`  
-   - `settings.py`  
+   - `setting.py`  
 
 > **Importante**: O foco é avaliar seu desenvolvimento backend em Python. Não se preocupe em criar contêineres para o banco ou a LLM Ollama; concentre-se apenas em implementar as funcionalidades solicitadas.  
 
