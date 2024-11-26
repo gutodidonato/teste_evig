@@ -1,5 +1,7 @@
 # Teste Técnico Backend Python
 
+Detalhes da vaga: https://br.indeed.com/job/desenvolvedor-back-end-python-7957a7185a251a5e
+
 ## Descrição
 
 Este repositório contém o **Teste Técnico Backend Python**, desenvolvido com o objetivo de avaliar as habilidades em Python, FastAPI, criação de CRUDs, consumo de APIs externas, utilização de bancos de dados com ORM e aplicação de técnicas de prompt engineering com Large Language Models (LLMs).
