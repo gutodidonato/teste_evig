@@ -40,6 +40,8 @@ Desenvolver uma aplicação backend utilizando **FastAPI** que permita a gestão
 }
 ```
 
+> **Observação**: As respostas do imovel, devem conter os campos **description** (gerados por llm) e **coordinate** (contendo latitude e longitude de **address_full**).  
+
 ## Tecnologias e Requisitos Obrigatórios
 
 - **Python**
