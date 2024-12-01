@@ -1,13 +1,9 @@
-# Required:
-ollama
 fastapi
-pydantic-settings
-uvicorn[standard]
-# psycopg2-binary # If necessary
-SQLAlchemy
-
-# Optional:
-# langchain-ollama
-# passlib[bcrypt] 
-# bcrypt
-# python-jose
+uvicorn
+sqlalchemy
+databases
+pydantic
+httpx
+passlib[bcrypt]
+python-jose
+langchain
