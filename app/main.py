@@ -41,7 +41,10 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    return crud.create_user(db=db, user=user)
+    try:
+        return crud.create_user(db=db, user=user)
+    except:
+        raise HTTPException(status_code=400, detail="Email already exists")
 
 @app.put("/users/{user_id}", response_model=schemas.User)
 def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db)):
@@ -77,3 +80,71 @@ def read_user_passwords(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return {"email": db_user.email, "hashed_password": db_user.password}
+
+
+# Rota para criar um imóvel
+@app.post("/properties/", response_model=schemas.Property)
+def create_property(property: schemas.PropertyCreate, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    token_data = auth.verify_token(token, credentials_exception)
+    user = crud.get_user_by_email(db, token_data.email)
+    if user is None:
+        raise credentials_exception
+    return crud.create_property(db=db, property=property)
+
+# Rota para atualizar um imóvel
+@app.put("/properties/{property_id}", response_model=schemas.Property)
+def update_property(property_id: int, property: schemas.PropertyUpdate, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    auth.verify_token(token, credentials_exception)
+    db_property = crud.update_property(db=db, property_id=property_id, property=property)
+    if db_property is None:
+        raise HTTPException(status_code=404, detail="Property not found")
+    return db_property
+
+# Rota para ler um imóvel
+@app.get("/properties/{property_id}", response_model=schemas.Property)
+def read_property(property_id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    auth.verify_token(token, credentials_exception)
+    db_property = crud.read_property(db=db, property_id=property_id)
+    if db_property is None:
+        raise HTTPException(status_code=404, detail="Property not found")
+    return db_property
+
+# Rota para ler todos os imóveis
+@app.get("/properties/", response_model=list[schemas.Property])
+def read_all_properties(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    auth.verify_token(token, credentials_exception)
+    return crud.read_all_properties(db=db)
+
+# Rota para deletar um imóvel
+@app.delete("/properties/{property_id}", response_model=schemas.Property)
+def delete_property(property_id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    auth.verify_token(token, credentials_exception)
+    db_property = crud.delete_property(db=db, property_id=property_id)
+    if db_property is None:
+        raise HTTPException(status_code=404, detail="Property not found")
+    return db_property

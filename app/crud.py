@@ -1,3 +1,4 @@
+import httpx
 from sqlalchemy.orm import Session
 from . import models, schemas
 from fastapi import HTTPException, status
@@ -54,3 +55,53 @@ def get_users(db: Session):
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_coordinates(address: str):
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "q": address,
+        "format": "json",
+        "limit": 1
+    }
+    response = httpx.get(url, params=params)
+    if response.status_code == 200 and response.json():
+        data = response.json()[0]
+        return float(data["lat"]), float(data["lon"])
+    return 0.0, 0.0
+
+def create_property(db: Session, property: schemas.PropertyCreate):
+    latitude, longitude = get_coordinates(property.address_full)
+    db_property = models.Property(**property.dict(), latitude=latitude, longitude=longitude)
+    db.add(db_property)
+    db.commit()
+    db.refresh(db_property)
+    return db_property
+
+def update_property(db: Session, property_id: int, property: schemas.PropertyUpdate):
+    db_property = db.query(models.Property).filter(models.Property.id == property_id).first()
+    if db_property is None:
+        return None
+    for key, value in property.dict().items():
+        setattr(db_property, key, value)
+    db_property.latitude, db_property.longitude = get_coordinates(property.address_full)
+    db.commit()
+    db.refresh(db_property)
+    return db_property
+
+def read_property(db: Session, property_id: int):
+    db_property = db.query(models.Property).filter(models.Property.id == property_id).first()
+    if db_property is None:
+        return None
+    return db_property
+
+def read_all_properties(db: Session):
+    return db.query(models.Property).all()
+
+def delete_property(db: Session, property_id: int):
+    db_property = db.query(models.Property).filter(models.Property.id == property_id).first()
+    if db_property is None:
+        return None
+    db.delete(db_property)
+    db.commit()
+    return db_property
