@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from app.repositories.property_repository import PropertyRepository
 from app.schemas.property import PropertyCreate, PropertyUpdate
 from app.external.generate_description import generate_description
+#from aiocache import cached // estou com problema com assincronicidade
+from functools import lru_cache
 
 class PropertyService:
     def __init__(self, db: Session):
@@ -19,6 +21,8 @@ class PropertyService:
     def get_property(self, property_id: int):
         return self.property_repository.get(property_id)
 
+
+    @lru_cache(maxsize=128)
     def get_all_properties(self):
         return self.property_repository.get_all()
 

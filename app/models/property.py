@@ -12,9 +12,6 @@ class Property(Base):
     bedrooms = Column(Integer)
     bathrooms = Column(Integer)
     parking = Column(Integer)
-    
-    #Vamos ter que passar pelo endpoint de ia
     latitude = Column(Float, default=0.0)
     longitude = Column(Float, default=0.0)
-    description = Column(String, default="Sem Descrição")
-    
+    description = Column(String, default="")

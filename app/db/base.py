@@ -1,11 +1,5 @@
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
+from app.db.session import engine
+from app.models import user, property
+from app.db.database import Base
 
-@as_declarative()
-class Base:
-    id: int
-    __name__: str
-
-    # Generate __tablename__ automatically
-    @declared_attr
-    def __tablename__(cls) -> str:
-        return cls.__name__.lower()
+Base.metadata.create_all(bind=engine)
