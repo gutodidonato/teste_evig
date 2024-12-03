@@ -5,5 +5,9 @@ O aplicativo também inclui testes unitários para garantir que as operações d
 
 
 ```sh
-docker build -t fastapi-app .
-docker run -d -p 8080:8080 --name fastapi-app fastapi-app
+docker build -t my-fastapi-app .
+docker run -p 8000:8000 my-fastapi-app
+
+```
+
+acesse: http://localhost:8000/docs
