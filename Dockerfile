@@ -1,26 +1,32 @@
-# Use uma imagem base do Python
-FROM python:3.13.0
+# Etapa de build
+FROM python:3.13-alpine AS build
 
-# Instale as dependências do sistema
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Instala as dependências do sistema
+RUN apk add --no-cache gcc musl-dev libffi-dev
 
-# Defina o diretório de trabalho
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copie os arquivos de requisitos e instale as dependências
+# Copia o arquivo de dependências
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie o restante do código da aplicação
-COPY ./app /app
+# Instala as dependências no diretório de build
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
-# Copie o arquivo .env
-COPY .env .env
+# Etapa final
+FROM python:3.13-alpine
 
-# Exponha a porta 8080
-EXPOSE 8080
+# Copia as dependências instaladas da etapa de build
+COPY --from=build /install /usr/local
 
-# Comando para iniciar a aplicação
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia todos os arquivos do projeto para o container
+COPY . /app
+
+# Expõe a porta 8000
+EXPOSE 8000
+
+# Define o comando padrão para rodar a aplicação
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
