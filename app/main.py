@@ -8,11 +8,14 @@ from app.db.base import Base
 from app.core.security import create_access_token, verify_password
 from app.services.user_service import UserService
 from app.schemas.token import Token
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Create the database tables
-Base.metadata.create_all(bind=engine)
+@app.get("/")
+def read_root():
+    return {"message": "Hello, world!"}
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/token")
 
