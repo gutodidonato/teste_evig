@@ -1,13 +1,10 @@
 # Use uma imagem base do Python
-FROM python:3.9
+FROM python:3.13.0
 
 # Instale as dependências do sistema
 RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
-
-# Instale o Ollama
-RUN curl -sSL https://ollama.com/install.sh | bash
 
 # Defina o diretório de trabalho
 WORKDIR /app
