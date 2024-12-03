@@ -5,5 +5,5 @@ O aplicativo também inclui testes unitários para garantir que as operações d
 
 
 ```sh
-docker-compose build
-docker-compose up
+docker build -t fastapi-app .
+docker run -d -p 8080:8080 --name fastapi-app fastapi-app
