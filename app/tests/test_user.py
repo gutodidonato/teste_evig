@@ -9,15 +9,24 @@ from app.main import app
 def db() -> Session:
     return next(get_db())
 
+@pytest.fixture
+def client() -> TestClient:
+    return TestClient(app)
+
 def test_create_user(client: TestClient, db: Session):
     response = client.post(
         "/api/v1/users/",
-        json={"fantasy_name": "bananinha", "cnpj": "eeeaaee", "email": "aaa@eeee.com", "password": "aaaa"}
+        json={"fantasy_name": "Test User", "cnpj": "12345678901234", "email": "test@example.com", "password": "aaaa"}
     )
     assert response.status_code == 200
     data = response.json()
-    assert data["email"] == "aaa@eeee.com"
+    assert data["email"] == "test@example.com"
     assert "id" in data
+
+    # Delete the user after the test
+    user_id = data["id"]
+    response = client.delete(f"/api/v1/users/{user_id}")
+    assert response.status_code == 200
 
 def test_update_user(client: TestClient, db: Session):
     response = client.post(
@@ -34,6 +43,10 @@ def test_update_user(client: TestClient, db: Session):
     data = response.json()
     assert data["email"] == "updated2@example.com"
 
+    # Delete the user after the test
+    response = client.delete(f"/api/v1/users/{user_id}")
+    assert response.status_code == 200
+
 def test_delete_user(client: TestClient, db: Session):
     response = client.post(
         "/api/v1/users/",
@@ -47,7 +60,18 @@ def test_delete_user(client: TestClient, db: Session):
     assert data["id"] == user_id
 
 def test_read_users(client: TestClient, db: Session):
+    response = client.post(
+        "/api/v1/users/",
+        json={"fantasy_name": "Test User 4", "cnpj": "12345678901237", "email": "test4@example.com", "password": "password123"}
+    )
+    assert response.status_code == 200
+    user_id = response.json()["id"]
+
     response = client.get("/api/v1/users/")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
+
+    # Delete the user after the test
+    response = client.delete(f"/api/v1/users/{user_id}")
+    assert response.status_code == 200
